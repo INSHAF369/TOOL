@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter - Multi-Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header"></div>
+
+    <main class="container tool-container">
+        <div class="tool-header">
+            <h1>Word Counter</h1>
+            <p class="tool-description">Count words, characters, sentences, and paragraphs in your text instantly.</p>
+        </div>
+
+        <div class="tool-content">
+            <div class="mb-4">
+                <textarea id="textInput" class="form-control" rows="10" placeholder="Type or paste your text here..."></textarea>
+            </div>
+
+            <div class="row stats-container mb-4">
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title" id="wordCount">0</h5>
+                            <p class="card-text">Words</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title" id="charCount">0</h5>
+                            <p class="card-text">Characters</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title" id="sentenceCount">0</h5>
+                            <p class="card-text">Sentences</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title" id="paragraphCount">0</h5>
+                            <p class="card-text">Paragraphs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <button id="clearText" class="btn btn-secondary me-2">Clear Text</button>
+                    <button id="copyText" class="btn btn-primary">Copy Text</button>
+                </div>
+            </div>
+
+            <!-- Ad Section -->
+            <div class="ad-space text-center p-3 bg-light mb-4">
+                <p class="text-muted">Advertisement Space</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/main.js"></script>
+    <script>
+        // Word Counter functionality
+        const textInput = document.getElementById('textInput');
+        const wordCount = document.getElementById('wordCount');
+        const charCount = document.getElementById('charCount');
+        const sentenceCount = document.getElementById('sentenceCount');
+        const paragraphCount = document.getElementById('paragraphCount');
+        const clearButton = document.getElementById('clearText');
+        const copyButton = document.getElementById('copyText');
+
+        function updateCounts() {
+            const text = textInput.value;
+            
+            // Word count
+            const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+            wordCount.textContent = words.length;
+            
+            // Character count
+            charCount.textContent = text.length;
+            
+            // Sentence count
+            const sentences = text.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0);
+            sentenceCount.textContent = sentences.length;
+            
+            // Paragraph count
+            const paragraphs = text.split('\n\n').filter(para => para.trim().length > 0);
+            paragraphCount.textContent = paragraphs.length;
+        }
+
+        textInput.addEventListener('input', updateCounts);
+
+        clearButton.addEventListener('click', () => {
+            textInput.value = '';
+            updateCounts();
+        });
+
+        copyButton.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(textInput.value);
+                alert('Text copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy text:', err);
+                alert('Failed to copy text. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

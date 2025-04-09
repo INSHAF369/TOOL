@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Length Converter - Multi-Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header"></div>
+
+    <main class="container my-4">
+        <div class="tool-container">
+            <div class="tool-header">
+                <h1>Length Converter</h1>
+                <p class="tool-description">Convert between different units of length measurement easily.</p>
+            </div>
+
+            <div class="tool-content">
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <label for="fromUnit" class="form-label">From Unit:</label>
+                        <select class="form-select" id="fromUnit">
+                            <option value="meters">Meters (m)</option>
+                            <option value="kilometers">Kilometers (km)</option>
+                            <option value="centimeters">Centimeters (cm)</option>
+                            <option value="millimeters">Millimeters (mm)</option>
+                            <option value="feet">Feet (ft)</option>
+                            <option value="inches">Inches (in)</option>
+                            <option value="yards">Yards (yd)</option>
+                            <option value="miles">Miles (mi)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="toUnit" class="form-label">To Unit:</label>
+                        <select class="form-select" id="toUnit">
+                            <option value="meters">Meters (m)</option>
+                            <option value="kilometers">Kilometers (km)</option>
+                            <option value="centimeters">Centimeters (cm)</option>
+                            <option value="millimeters">Millimeters (mm)</option>
+                            <option value="feet">Feet (ft)</option>
+                            <option value="inches">Inches (in)</option>
+                            <option value="yards">Yards (yd)</option>
+                            <option value="miles">Miles (mi)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <label for="fromValue" class="form-label">Enter Value:</label>
+                        <input type="number" class="form-control" id="fromValue" value="1" step="any">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="result" class="form-label">Result:</label>
+                        <input type="text" class="form-control" id="result" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load header and footer
+        fetch('../../components/header.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('header').innerHTML = data);
+
+        fetch('../../components/footer.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('footer').innerHTML = data);
+
+        // Conversion factors to meters (base unit)
+        const conversionFactors = {
+            meters: 1,
+            kilometers: 1000,
+            centimeters: 0.01,
+            millimeters: 0.001,
+            feet: 0.3048,
+            inches: 0.0254,
+            yards: 0.9144,
+            miles: 1609.344
+        };
+
+        function convert() {
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+            const fromValue = parseFloat(document.getElementById('fromValue').value);
+
+            if (isNaN(fromValue)) {
+                document.getElementById('result').value = 'Please enter a valid number';
+                return;
+            }
+
+            // Convert to meters first (base unit)
+            const meters = fromValue * conversionFactors[fromUnit];
+            // Convert from meters to target unit
+            const result = meters / conversionFactors[toUnit];
+
+            document.getElementById('result').value = result.toFixed(6);
+        }
+
+        // Add event listeners
+        document.getElementById('fromUnit').addEventListener('change', convert);
+        document.getElementById('toUnit').addEventListener('change', convert);
+        document.getElementById('fromValue').addEventListener('input', convert);
+
+        // Initial conversion
+        convert();
+    </script>
+</body>
+</html>

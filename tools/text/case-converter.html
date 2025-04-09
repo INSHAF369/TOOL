@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Converter - Online Text Case Converter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header"></div>
+
+    <main class="container my-4">
+        <div class="tool-container">
+            <div class="tool-header">
+                <h1>Case Converter</h1>
+                <p class="tool-description">Convert your text to uppercase, lowercase, title case, or sentence case instantly.</p>
+            </div>
+
+            <div class="tool-content">
+                <div class="mb-3">
+                    <label for="inputText" class="form-label">Enter your text:</label>
+                    <textarea class="form-control" id="inputText" rows="6" placeholder="Type or paste your text here..."></textarea>
+                </div>
+
+                <div class="btn-group mb-3" role="group">
+                    <button class="btn btn-primary" onclick="convertCase('upper')">UPPERCASE</button>
+                    <button class="btn btn-primary" onclick="convertCase('lower')">lowercase</button>
+                    <button class="btn btn-primary" onclick="convertCase('title')">Title Case</button>
+                    <button class="btn btn-primary" onclick="convertCase('sentence')">Sentence case</button>
+                </div>
+
+                <div class="mb-3">
+                    <label for="outputText" class="form-label">Result:</label>
+                    <textarea class="form-control" id="outputText" rows="6" readonly></textarea>
+                </div>
+
+                <button class="btn btn-success" onclick="copyToClipboard()">Copy to Clipboard</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load header and footer
+        fetch('../../components/header.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('header').innerHTML = data);
+
+        fetch('../../components/footer.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('footer').innerHTML = data);
+
+        function convertCase(type) {
+            const inputText = document.getElementById('inputText').value;
+            let result = '';
+
+            switch(type) {
+                case 'upper':
+                    result = inputText.toUpperCase();
+                    break;
+                case 'lower':
+                    result = inputText.toLowerCase();
+                    break;
+                case 'title':
+                    result = inputText.toLowerCase().split(' ')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ');
+                    break;
+                case 'sentence':
+                    result = inputText.toLowerCase().replace(/(^|\. )\w/g, l => l.toUpperCase());
+                    break;
+            }
+
+            document.getElementById('outputText').value = result;
+        }
+
+        function copyToClipboard() {
+            const outputText = document.getElementById('outputText');
+            outputText.select();
+            document.execCommand('copy');
+            alert('Text copied to clipboard!');
+        }
+    </script>
+</body>
+</html>

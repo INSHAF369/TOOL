@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta Tag Generator - Multi-Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header"></div>
+
+    <main class="container my-4">
+        <div class="tool-container">
+            <div class="tool-header">
+                <h1>Meta Tag Generator</h1>
+                <p class="tool-description">Generate SEO-friendly meta tags for your website easily.</p>
+            </div>
+
+            <div class="tool-content">
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <label for="pageTitle" class="form-label">Page Title</label>
+                        <input type="text" class="form-control" id="pageTitle" placeholder="Enter your page title">
+                        <div class="form-text">Recommended length: 50-60 characters</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="pageUrl" class="form-label">Page URL</label>
+                        <input type="url" class="form-control" id="pageUrl" placeholder="https://example.com">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="metaDescription" class="form-label">Meta Description</label>
+                    <textarea class="form-control" id="metaDescription" rows="3" placeholder="Enter your meta description"></textarea>
+                    <div class="form-text">Recommended length: 150-160 characters</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="keywords" class="form-label">Keywords (comma-separated)</label>
+                    <input type="text" class="form-control" id="keywords" placeholder="keyword1, keyword2, keyword3">
+                </div>
+
+                <div class="mb-3">
+                    <label for="author" class="form-label">Author</label>
+                    <input type="text" class="form-control" id="author" placeholder="Enter author name">
+                </div>
+
+                <div class="mb-4">
+                    <h4>Social Media</h4>
+                    <div class="mb-3">
+                        <label for="ogTitle" class="form-label">Open Graph Title</label>
+                        <input type="text" class="form-control" id="ogTitle" placeholder="Enter Open Graph title">
+                    </div>
+                    <div class="mb-3">
+                        <label for="ogDescription" class="form-label">Open Graph Description</label>
+                        <textarea class="form-control" id="ogDescription" rows="2" placeholder="Enter Open Graph description"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ogImage" class="form-label">Open Graph Image URL</label>
+                        <input type="url" class="form-control" id="ogImage" placeholder="https://example.com/image.jpg">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <button class="btn btn-primary" onclick="generateMetaTags()">Generate Meta Tags</button>
+                </div>
+
+                <div class="mb-4">
+                    <label for="generatedCode" class="form-label">Generated Meta Tags</label>
+                    <textarea class="form-control" id="generatedCode" rows="10" readonly></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <button class="btn btn-secondary" onclick="copyToClipboard()">Copy to Clipboard</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load header and footer
+        fetch('../../components/header.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('header').innerHTML = data);
+
+        fetch('../../components/footer.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('footer').innerHTML = data);
+
+        function generateMetaTags() {
+            const pageTitle = document.getElementById('pageTitle').value.trim();
+            const pageUrl = document.getElementById('pageUrl').value.trim();
+            const metaDescription = document.getElementById('metaDescription').value.trim();
+            const keywords = document.getElementById('keywords').value.trim();
+            const author = document.getElementById('author').value.trim();
+            const ogTitle = document.getElementById('ogTitle').value.trim() || pageTitle;
+            const ogDescription = document.getElementById('ogDescription').value.trim() || metaDescription;
+            const ogImage = document.getElementById('ogImage').value.trim();
+
+            let metaTags = `<!-- Primary Meta Tags -->
+<title>${escapeHtml(pageTitle)}</title>
+<meta name="title" content="${escapeHtml(pageTitle)}">
+<meta name="description" content="${escapeHtml(metaDescription)}">`;
+
+            if (keywords) {
+                metaTags += `
+<meta name="keywords" content="${escapeHtml(keywords)}">`;
+            }
+
+            if (author) {
+                metaTags += `
+<meta name="author" content="${escapeHtml(author)}">`;
+            }
+
+            metaTags += `
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="${escapeHtml(pageUrl)}">
+<meta property="og:title" content="${escapeHtml(ogTitle)}">
+<meta property="og:description" content="${escapeHtml(ogDescription)}">`;
+
+            if (ogImage) {
+                metaTags += `
+<meta property="og:image" content="${escapeHtml(ogImage)}">`;
+            }
+
+            metaTags += `
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="${escapeHtml(pageUrl)}">
+<meta property="twitter:title" content="${escapeHtml(ogTitle)}">
+<meta property="twitter:description" content="${escapeHtml(ogDescription)}">`;
+
+            if (ogImage) {
+                metaTags += `
+<meta property="twitter:image" content="${escapeHtml(ogImage)}">`;
+            }
+
+            document.getElementById('generatedCode').value = metaTags;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function copyToClipboard() {
+            const generatedCode = document.getElementById('generatedCode');
+            generatedCode.select();
+            document.execCommand('copy');
+            alert('Meta tags copied to clipboard!');
+        }
+
+        // Add event listeners for real-time preview
+        const inputs = ['pageTitle', 'pageUrl', 'metaDescription', 'keywords', 'author', 'ogTitle', 'ogDescription', 'ogImage'];
+        inputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', generateMetaTags);
+        });
+    </script>
+</body>
+</html>
